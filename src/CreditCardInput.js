@@ -16,6 +16,7 @@ import CCInput from "./CCInput";
 import { InjectedProps } from "./connectToState";
 import defaultIcons from "./Icons";
 import { Image } from "react-native";
+import { Icon } from "react-native-elements";
 
 const s = StyleSheet.create({
   container: {
@@ -182,20 +183,28 @@ export default class CreditCardInput extends Component {
           <CCInput {...this._inputProps("number")}
             keyboardType="numeric"
             containerStyle={[s.inputContainer, inputContainerStyle, { width: CARD_NUMBER_INPUT_WIDTH }]} />
-          <CCInput {...this._inputProps("expiry")}
-            keyboardType="numeric"
-            containerStyle={[s.inputContainer, inputContainerStyle, { width: EXPIRY_INPUT_WIDTH }]} />
-          {requiresCVC &&
-            <CCInput {...this._inputProps("cvc")}
+          <View style={{ flexDirection: 'row' }}>
+            <CCInput {...this._inputProps("expiry")}
               keyboardType="numeric"
-              containerStyle={[s.inputContainer, inputContainerStyle, { width: CVC_INPUT_WIDTH }]} />}
+              containerStyle={[s.inputContainer, inputContainerStyle, { width: EXPIRY_INPUT_WIDTH }]} />
+            {requiresCVC &&
+              <CCInput {...this._inputProps("cvc")}
+                keyboardType="numeric"
+                containerStyle={[s.inputContainer, inputContainerStyle, { width: CVC_INPUT_WIDTH }]} />}
+          </View>
+
+
           {requiresName &&
             <CCInput {...this._inputProps("name")}
               containerStyle={[s.inputContainer, inputContainerStyle, { width: NAME_INPUT_WIDTH }]} />}
           {requiresPostalCode &&
-            <CCInput {...this._inputProps("postalCode")}
-              keyboardType="numeric"
-              containerStyle={[s.inputContainer, inputContainerStyle, { width: POSTAL_CODE_INPUT_WIDTH }]} />}
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Icon name="location-on" size={24} color={"gray"} containerStyle={{marginRight: -25}}/>
+              <CCInput {...this._inputProps("postalCode")}
+                keyboardType="numeric"
+                containerStyle={[s.inputContainer, inputContainerStyle, { width: POSTAL_CODE_INPUT_WIDTH }]} />
+            </View>
+          }
         </ScrollView>
       </View>
     );

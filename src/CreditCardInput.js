@@ -92,7 +92,7 @@ export default class CreditCardInput extends Component {
       number: "CARD NUMBER",
       expiry: "EXPIRY",
       cvc: "CVC/CCV",
-      postalCode: "POSTAL CODE",
+      postalCode: "ZIP CODE",
     },
     placeholders: {
       name: "Full Name",
@@ -208,7 +208,7 @@ export default class CreditCardInput extends Component {
             {this.props.isExpiryError ?
               <Text style={s.errorMessage}>{this.props.errorMessage}</Text> : null}
             {this.props.isCVCError ?
-              <Text style={[s.errorMessage, { marginLeft: EXPIRY_INPUT_WIDTH + 100 }]}>{this.props.errorMessage}</Text> : null}
+              <Text style={[s.errorMessage, { marginLeft: EXPIRY_INPUT_WIDTH + 80 }]}>{this.props.errorMessage}</Text> : null}
           </View>
 
 
@@ -223,6 +223,8 @@ export default class CreditCardInput extends Component {
                 containerStyle={[s.inputContainer, inputContainerStyle, { width: POSTAL_CODE_INPUT_WIDTH }]} />
             </View>
           }
+          {this.props.isPostalError ?
+            <Text style={s.errorMessage}>{this.props.errorMessage}</Text> : null}
         </ScrollView>
       </View >
     );

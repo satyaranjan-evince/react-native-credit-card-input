@@ -24,10 +24,10 @@ const s = StyleSheet.create({
   },
   form: {
     marginTop: 5,
-    marginLeft: -30
+    marginLeft: -35
   },
   inputContainer: {
-    marginLeft: 60,
+    marginLeft: 40,
     marginVertical: 10
   },
   inputLabel: {
@@ -47,7 +47,7 @@ const s = StyleSheet.create({
   errorMessage: {
     fontSize: 12,
     color: "red",
-    marginLeft: 60,
+    marginLeft: 40,
   }
 });
 
@@ -185,8 +185,8 @@ export default class CreditCardInput extends Component {
           scrollEnabled={allowScroll}
           showsHorizontalScrollIndicator={false}
           style={s.form}>
-          <Image style={[s.icon]}
-            source={Icons[type] || Icons['placeholder']} />
+          {/* <Image style={[s.icon]}
+            source={Icons[type] || Icons['placeholder']} /> */}
           <CCInput {...this._inputProps("number")}
             keyboardType="numeric"
             containerStyle={[s.inputContainer, inputContainerStyle, { width: CARD_NUMBER_INPUT_WIDTH }]} />

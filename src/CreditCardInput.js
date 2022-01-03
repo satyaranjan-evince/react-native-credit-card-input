@@ -23,10 +23,11 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   form: {
-    marginTop: 0,
+    marginTop: 5,
+    marginLeft: -30
   },
   inputContainer: {
-    marginLeft: 50,
+    marginLeft: 60,
     marginVertical: 10
   },
   inputLabel: {
@@ -38,7 +39,7 @@ const s = StyleSheet.create({
   icon: {
     position: "absolute",
     top: 15,
-    left: 5,
+    left: 0,
     width: 60,
     height: 40,
     resizeMode: "contain",
@@ -46,7 +47,7 @@ const s = StyleSheet.create({
   errorMessage: {
     fontSize: 12,
     color: "red",
-    marginLeft: 50,
+    marginLeft: 60,
   }
 });
 
@@ -166,7 +167,7 @@ export default class CreditCardInput extends Component {
     const Icons = { ...defaultIcons };
     return (
       <View style={s.container}>
-        {/* <CreditCard focused={focused}
+        <CreditCard focused={focused}
           brand={type}
           scale={cardScale}
           fontFamily={cardFontFamily}
@@ -176,15 +177,16 @@ export default class CreditCardInput extends Component {
           name={requiresName ? name : " "}
           number={number}
           expiry={expiry}
-          cvc={cvc} /> */}
-        <Image style={[s.icon]}
-          source={Icons[type] || Icons['placeholder']} />
+          cvc={cvc} />
+
         <ScrollView ref="Form"
           // horizontal
           keyboardShouldPersistTaps="always"
           scrollEnabled={allowScroll}
           showsHorizontalScrollIndicator={false}
           style={s.form}>
+          <Image style={[s.icon]}
+            source={Icons[type] || Icons['placeholder']} />
           <CCInput {...this._inputProps("number")}
             keyboardType="numeric"
             containerStyle={[s.inputContainer, inputContainerStyle, { width: CARD_NUMBER_INPUT_WIDTH }]} />

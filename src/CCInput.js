@@ -12,6 +12,11 @@ import {
 const s = StyleSheet.create({
   baseInputStyle: {
     color: "black",
+    borderWidth: 2,
+    marginTop: 10,
+    backgroundColor: "#f6f6f6",
+    height : 55
+
   },
 });
 
@@ -46,12 +51,16 @@ export default class CCInput extends Component {
     containerStyle: {},
     inputStyle: {},
     labelStyle: {},
-    onFocus: () => {},
-    onChange: () => {},
-    onBecomeEmpty: () => {},
-    onBecomeValid: () => {},
+    onFocus: () => { },
+    onChange: () => { },
+    onBecomeEmpty: () => { },
+    onBecomeValid: () => { },
     additionalInputProps: {},
   };
+
+  state = {
+    isActive: false
+  }
 
   componentWillReceiveProps = newProps => {
     const { status, value, onBecomeEmpty, onBecomeValid, field } = this.props;
@@ -63,36 +72,49 @@ export default class CCInput extends Component {
 
   focus = () => this.refs.input.focus();
 
-  _onFocus = () => this.props.onFocus(this.props.field);
+  _onFocus = () => {
+    this.setState({ isActive: true })
+    this.props.onFocus(this.props.field)
+  };
+
+  _onBlur = () => {
+    this.setState({ isActive: false })
+  };
+
   _onChange = value => this.props.onChange(this.props.field, value);
 
   render() {
     const { label, value, placeholder, status, keyboardType,
-            containerStyle, inputStyle, labelStyle,
-            validColor, invalidColor, placeholderColor,
-            additionalInputProps } = this.props;
+      containerStyle, inputStyle, labelStyle,
+      validColor, invalidColor, placeholderColor,
+      editable,
+      additionalInputProps } = this.props;
     return (
       <TouchableOpacity onPress={this.focus}
         activeOpacity={0.99}>
         <View style={[containerStyle]}>
-          { !!label && <Text style={[labelStyle]}>{label}</Text>}
+          {!!label && <Text style={[labelStyle]}>{label}</Text>}
+
           <TextInput ref="input"
             {...additionalInputProps}
             keyboardType={keyboardType}
             autoCapitalise="words"
+            editable={editable}
             autoCorrect={false}
             style={[
               s.baseInputStyle,
               inputStyle,
               ((validColor && status === "valid") ? { color: validColor } :
-              (invalidColor && status === "invalid") ? { color: invalidColor } :
-              {}),
+                (invalidColor && status === "invalid") ? { color: invalidColor } :
+                  {}),
+              { borderColor: this.state.isActive ? "black" : "transparent" }
             ]}
             underlineColorAndroid={"transparent"}
             placeholderTextColor={placeholderColor}
             placeholder={placeholder}
-            value={value}
+            value={(editable == false ? "•••• " : "") + value}
             onFocus={this._onFocus}
+            onBlur={this._onBlur}
             onChangeText={this._onChange} />
         </View>
       </TouchableOpacity>

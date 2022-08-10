@@ -17,44 +17,56 @@ import { InjectedProps } from "./connectToState";
 import defaultIcons from "./Icons";
 import { Image } from "react-native";
 import { Icon } from "react-native-elements";
+import CountryPicker from 'react-native-country-picker-modal';
+import { TouchableOpacity } from "react-native";
 
 const s = StyleSheet.create({
   container: {
     alignItems: "center",
   },
+  countryPicker: {
+    color: "black",
+    padding: 10,
+    justifyContent:'center',
+    marginTop: 10,
+    backgroundColor: "#f6f6f6",
+    width: "100%",
+    height : 55
+  },
   form: {
     marginTop: 5,
-    marginLeft: -35
+    // marginLeft: -60,
+    width: "100%"
   },
   inputContainer: {
-    marginLeft: 40,
-    marginVertical: 10
+    marginVertical: 10,
   },
   inputLabel: {
     fontWeight: "bold",
+    color: "black"
   },
   input: {
     height: 40,
   },
   icon: {
     position: "absolute",
-    top: 15,
-    left: 0,
-    width: 60,
-    height: 40,
+    top: 50,
+    left: 10,
+    width: 40,
+    height: 30,
     resizeMode: "contain",
+    zIndex: 2
   },
   errorMessage: {
     fontSize: 12,
     color: "red",
-    marginLeft: 40,
   }
 });
 
-const CVC_INPUT_WIDTH = 70;
+const CVC_INPUT_WIDTH = Dimensions.get("window").width / 2 - 10;
 const EXPIRY_INPUT_WIDTH = CVC_INPUT_WIDTH;
 const CARD_NUMBER_INPUT_WIDTH_OFFSET = 40;
-const CARD_NUMBER_INPUT_WIDTH = Dimensions.get("window").width - EXPIRY_INPUT_WIDTH - CARD_NUMBER_INPUT_WIDTH_OFFSET;
+const CARD_NUMBER_INPUT_WIDTH = "100%";
 const NAME_INPUT_WIDTH = CARD_NUMBER_INPUT_WIDTH;
 const PREVIOUS_FIELD_OFFSET = 40;
 const POSTAL_CODE_INPUT_WIDTH = 120;
@@ -89,21 +101,21 @@ export default class CreditCardInput extends Component {
     cardViewSize: {},
     labels: {
       name: "CARDHOLDER'S NAME",
-      number: "CARD NUMBER",
-      expiry: "EXPIRY",
-      cvc: "CVC/CCV",
-      postalCode: "ZIP CODE",
+      number: "Card Number",
+      expiry: "Exp. Date",
+      cvc: "CVV",
+      postalCode: "Zip Code",
     },
     placeholders: {
       name: "Full Name",
       number: "1234 5678 1234 5678",
       expiry: "MM/YY",
-      cvc: "CVC",
+      cvc: "123",
       postalCode: "34567",
     },
     inputContainerStyle: {
-      borderBottomWidth: 1,
-      borderBottomColor: "black",
+      borderBottomWidth: 0,
+      borderBottomColor: "red",
     },
     validColor: "",
     invalidColor: "red",
@@ -112,10 +124,36 @@ export default class CreditCardInput extends Component {
     additionalInputsProps: {},
   };
 
-  componentDidMount = () => this._focus(this.props.focused);
+  state = {
+    pickerVisible: false,
+    dialCode: "",
+    code: ""
+  }
+  componentDidMount = () => {
+    this._focus(this.props.focused)
+    if (this.props.dialCode !== undefined) {
+      this.setState({ dialCode: this.props.dialCode })
+    }
+
+  };
+
+  onCountrySelect = country => {
+    this.setState({
+      code: country.cca2, dialCode: country.cca2
+    })
+    this.props.onCountrySelect !== undefined ?
+      this.props.onCountrySelect(country) : {}
+  }
+
 
   componentWillReceiveProps = newProps => {
     if (this.props.focused !== newProps.focused) this._focus(newProps.focused);
+
+    if (newProps.dialCode !== undefined) {
+      this.setState({ dialCode: newProps.dialCode })
+    }
+
+
   };
 
   _focus = field => {
@@ -161,13 +199,13 @@ export default class CreditCardInput extends Component {
     const {
       cardImageFront, cardImageBack, inputContainerStyle,
       values: { number, expiry, cvc, name, type }, focused,
-      allowScroll, requiresName, requiresCVC, requiresPostalCode,
+      allowScroll, requiresName, requiresCVC, requiresPostalCode, requiresCountry, isReadOnly,
       cardScale, cardFontFamily, cardBrandIcons,
     } = this.props;
     const Icons = { ...defaultIcons };
     return (
       <View style={s.container}>
-        <CreditCard focused={focused}
+        {/* <CreditCard focused={focused}
           brand={type}
           scale={cardScale}
           fontFamily={cardFontFamily}
@@ -177,49 +215,102 @@ export default class CreditCardInput extends Component {
           name={requiresName ? name : " "}
           number={number}
           expiry={expiry}
-          cvc={cvc} />
+          cvc={cvc} /> */}
 
         <ScrollView ref="Form"
           // horizontal
+
           keyboardShouldPersistTaps="always"
           scrollEnabled={allowScroll}
           showsHorizontalScrollIndicator={false}
           style={s.form}>
-          {/* <Image style={[s.icon]}
-            source={Icons[type] || Icons['placeholder']} /> */}
-          <CCInput {...this._inputProps("number")}
-            keyboardType="numeric"
-            containerStyle={[s.inputContainer, inputContainerStyle, { width: CARD_NUMBER_INPUT_WIDTH }]} />
+          <Image style={[s.icon]}
+            source={Icons[type] || Icons['placeholder']} />
+          {isReadOnly ?
+            // <Text
+            // // keyboardType="numeric"
+            // inputStyle={{ paddingLeft: 60 }}
+            // style={[s.inputContainer, inputContainerStyle, { width: CARD_NUMBER_INPUT_WIDTH }]}
+            // >TEST</Text>
+            <CCInput {...this._inputProps("number")}
+              editable={false}
+              invalidColor="black"
+              keyboardType="numeric"
+              inputStyle={{ paddingLeft: 60 }}
+              containerStyle={[s.inputContainer, inputContainerStyle, { width: CARD_NUMBER_INPUT_WIDTH }]} />
+            :
+            <CCInput {...this._inputProps("number")}
+              keyboardType="numeric"
+              inputStyle={{ paddingLeft: 60 }}
+              containerStyle={[s.inputContainer, inputContainerStyle, { width: CARD_NUMBER_INPUT_WIDTH }]} />
+          }
           {this.props.isCardError ?
             <Text style={s.errorMessage}>{this.props.errorMessage}</Text> : null}
           <View style={{ flexDirection: 'row' }}>
 
             <CCInput {...this._inputProps("expiry")}
               keyboardType="numeric"
-              containerStyle={[s.inputContainer, inputContainerStyle, { width: EXPIRY_INPUT_WIDTH }]} />
+              inputStyle={{ paddingLeft: 10 }}
+              containerStyle={[s.inputContainer, inputContainerStyle, { width: (isReadOnly ? Dimensions.get("window").width - 20 : EXPIRY_INPUT_WIDTH - 10)  }]} />
 
 
             {requiresCVC &&
               <CCInput {...this._inputProps("cvc")}
                 keyboardType="numeric"
-                containerStyle={[s.inputContainer, inputContainerStyle, { width: CVC_INPUT_WIDTH }]} />}
+                inputStyle={{ paddingLeft: 10 }}
+                containerStyle={[s.inputContainer, inputContainerStyle, { width: CVC_INPUT_WIDTH - 10, marginLeft: 20 }]} />}
           </View>
           <View style={{ flexDirection: 'row' }}>
             {this.props.isExpiryError ?
               <Text style={s.errorMessage}>{this.props.errorMessage}</Text> : null}
             {this.props.isCVCError ?
-              <Text style={[s.errorMessage, { marginLeft: EXPIRY_INPUT_WIDTH + 80 }]}>{this.props.errorMessage}</Text> : null}
+              <Text style={[s.errorMessage, { marginLeft: EXPIRY_INPUT_WIDTH + 20 }]}>{this.props.errorMessage}</Text> : null}
           </View>
+          {requiresCountry &&
+            <>
+              <Text style={[s.inputLabel, { marginTop: 5 }]}>{"Country"}</Text>
+              <CountryPicker
+                countryCodes={this.props.countryData !== undefined && this.props.countryData[0] !== undefined ? this.props.countryData.map(data => data.iso) : []}
+                withFilter
+                withCountryNameButton
+                withAlphaFilter={false}
+                withCallingCode={false}
+                withEmoji
 
+                visible={this.state.pickerVisible}
+                onClose={() => this.setState({ pickerVisible: false })}
+                countryCode={this.state.dialCode}
+                preferredCountries={this.props.countryData !== undefined && this.props.countryData[0] !== undefined ? [this.props.countryData.map(data => data.iso)[0]] : []}
+                onSelect={this.onCountrySelect}
+                containerButtonStyle={s.countryPicker}
 
+              // renderFlagButton={() => {
+              //   return <TouchableOpacity
+              //     disabled={this.props.editableBox !== undefined &&
+              //       this.props.editableBox === false
+              //       ? true
+              //       : false}
+              //     onPress={() => { this.setState({ pickerVisible: true }) }}>
+              //     <Text
+              //       style={[s.countryPicker,this.props.codeTextStyle,]}
+              //     >{this.state.dialCode.includes("+") ? this.props.dialCode : ("+" + this.state.dialCode)}</Text>
+              //   </TouchableOpacity>
+              // }}
+
+              />
+              <Icon onPress={() => { this.setState({ pickerVisible: true }) }} name="arrow-drop-down" color={"#999999"} size={30} containerStyle={{ alignSelf: "flex-end", marginTop: -42.5, marginBottom: 15, zIndex: 1, marginRight: 10 }} />
+            </>}
+          {this.props.isCountryError ?
+            <Text style={s.errorMessage}>{this.props.errorMessage}</Text> : null}
           {requiresName &&
             <CCInput {...this._inputProps("name")}
               containerStyle={[s.inputContainer, inputContainerStyle, { width: NAME_INPUT_WIDTH }]} />}
           {requiresPostalCode &&
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Icon name="location-on" size={24} color={"gray"} containerStyle={{ marginRight: -25 }} />
+              {/* <Icon name="location-on" size={24} color={"gray"} containerStyle={{ marginRight: -25 }} /> */}
               <CCInput {...this._inputProps("postalCode")}
                 keyboardType="numeric"
+                inputStyle={{ paddingLeft: 10 }}
                 containerStyle={[s.inputContainer, inputContainerStyle, { width: POSTAL_CODE_INPUT_WIDTH }]} />
             </View>
           }

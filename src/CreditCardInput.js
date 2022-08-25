@@ -258,13 +258,13 @@ export default class CreditCardInput extends Component {
               <CCInput {...this._inputProps("cvc")}
                 keyboardType="numeric"
                 inputStyle={{ paddingLeft: 10 }}
-                containerStyle={[s.inputContainer, inputContainerStyle, { width: CVC_INPUT_WIDTH - 10, marginLeft: 20 }]} />}
+                containerStyle={[s.inputContainer, inputContainerStyle, { width: CVC_INPUT_WIDTH - 20, marginLeft: 10 }]} />}
           </View>
           <View style={{ flexDirection: 'row' }}>
             {this.props.isExpiryError ?
               <Text style={s.errorMessage}>{this.props.errorMessage}</Text> : null}
             {this.props.isCVCError ?
-              <Text style={[s.errorMessage, { marginLeft: EXPIRY_INPUT_WIDTH + 20 }]}>{this.props.errorMessage}</Text> : null}
+              <Text style={[s.errorMessage, { marginLeft: EXPIRY_INPUT_WIDTH  }]}>{this.props.errorMessage}</Text> : null}
           </View>
           {requiresCountry &&
             <>

@@ -8,6 +8,7 @@ import {
   StyleSheet,
   ViewPropTypes,
 } from "react-native";
+import { EDColors } from "../../../app/utils/EDColors";
 
 const s = StyleSheet.create({
   baseInputStyle: {
@@ -115,6 +116,7 @@ export default class CCInput extends Component {
             value={(editable == false ? "•••• " : "") + value}
             onFocus={this._onFocus}
             onBlur={this._onBlur}
+            selectionColor={EDColors.primary}
             onChangeText={this._onChange} />
         </View>
       </TouchableOpacity>

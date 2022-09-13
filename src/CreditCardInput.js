@@ -201,6 +201,8 @@ export default class CreditCardInput extends Component {
       values: { number, expiry, cvc, name, type }, focused,
       allowScroll, requiresName, requiresCVC, requiresPostalCode, requiresCountry, isReadOnly,
       cardScale, cardFontFamily, cardBrandIcons,
+      cvcStyle, expiryStyle,
+      errorLeftPadding
     } = this.props;
     const Icons = { ...defaultIcons };
     return (
@@ -251,20 +253,20 @@ export default class CreditCardInput extends Component {
             <CCInput {...this._inputProps("expiry")}
               keyboardType="numeric"
               inputStyle={{ paddingLeft: 10 }}
-              containerStyle={[s.inputContainer, inputContainerStyle, { width: (isReadOnly ? Dimensions.get("window").width - 20 : EXPIRY_INPUT_WIDTH - 10)  }]} />
+              containerStyle={[s.inputContainer, inputContainerStyle,{ width: (isReadOnly ? Dimensions.get("window").width - 20 : EXPIRY_INPUT_WIDTH - 10)  },expiryStyle]} />
 
 
             {requiresCVC &&
               <CCInput {...this._inputProps("cvc")}
                 keyboardType="numeric"
                 inputStyle={{ paddingLeft: 10 }}
-                containerStyle={[s.inputContainer, inputContainerStyle, { width: CVC_INPUT_WIDTH - 20, marginLeft: 10 }]} />}
+                containerStyle={[s.inputContainer,inputContainerStyle, { width: CVC_INPUT_WIDTH - 20, marginLeft: 10 }, cvcStyle]} />}
           </View>
           <View style={{ flexDirection: 'row' }}>
             {this.props.isExpiryError ?
               <Text style={s.errorMessage}>{this.props.errorMessage}</Text> : null}
             {this.props.isCVCError ?
-              <Text style={[s.errorMessage, { marginLeft: EXPIRY_INPUT_WIDTH  }]}>{this.props.errorMessage}</Text> : null}
+              <Text style={[s.errorMessage, { marginLeft:  errorLeftPadding || EXPIRY_INPUT_WIDTH  }]}>{this.props.errorMessage}</Text> : null}
           </View>
           {requiresCountry &&
             <>
